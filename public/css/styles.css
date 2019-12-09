@@ -1,0 +1,12 @@
+.pagination,
+.card .card-body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.pagination{
+    flex-direction: row;
+}
+.card .card-body{
+    flex-direction: column;
+}
