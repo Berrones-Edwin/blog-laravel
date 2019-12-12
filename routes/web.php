@@ -14,8 +14,16 @@
 Route::redirect('/','blog');
 
 Auth::routes();
+Route::group(['namespace'=>'Web'],function(){
+    Route::get('blog', 'PageController@blog')->name('blog');
+    Route::get('entrada/{slug}', 'PageController@post')->name('post');
+    Route::get('categoria/{slug}', 'PageController@category')->name('category');
+    Route::get('etiqueta/{slug}', 'PageController@tag')->name('tag');
+});
 
-Route::get('blog', 'Web\PageController@blog')->name('blog');
-Route::get('entrada/{slug}', 'Web\PageController@post')->name('post');
-Route::get('categoria/{slug}', 'Web\PageController@category')->name('category');
-Route::get('etiqueta/{slug}', 'Web\PageController@tag')->name('tag');
+// admin
+Route::group(['namespace'=>'Admin'],function(){
+    Route::resource('tags', 'TagController');
+    Route::resource('categories', 'CategoryController');
+    Route::resource('posts', 'PostController');
+});
