@@ -13,10 +13,14 @@
                 </div>
 
                 <div class="card-body">
-                   <form action="">
+                   <form action="{{  route('tags.store') }}" method="post">
+                        @csrf
+                        @method('POST')
                         @include('admin.tag.form')
+                      
                    </form>
                 </div>
+                
             </div>
         </div>
     </div>

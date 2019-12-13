@@ -28,8 +28,15 @@
                                     <td>{{ $tag->name }}</td>
                                     <td>{{ $tag->slug }}</td>
                                     <td>
-                                        <button class="btn btn-sm btn-warning">Editar</button>
-                                        <button class="btn btn-sm btn-danger">Eliminar</button>
+
+                                        <a href="{{ route('tags.edit',$tag) }}" class="btn btn-sm btn-warning">Editar</a>
+
+                                        <form class="d-inline" action="{{ route('tags.destroy',$tag) }}" method="post">
+                                            @csrf
+                                            @method('DELETE')
+                                            <input type="submit" value="Eliminar"  class="btn btn-sm btn-danger"></a>
+                                        </form>
+
                                     </td>
                                 </tr>
                             @endforeach

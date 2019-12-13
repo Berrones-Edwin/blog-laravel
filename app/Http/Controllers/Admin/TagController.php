@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+// Helpers
+use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
+
 use App\Http\Requests\TagRequest;
 use App\Tag;
 
@@ -18,7 +22,7 @@ class TagController extends Controller
     public function index()
     {
         //
-        $tags = Tag::orderBy('id')->paginate(10);
+        $tags = Tag::orderBy('id','desc')->paginate(10);
         return view('admin.tag.index',compact('tags'));
         
     }
@@ -31,6 +35,7 @@ class TagController extends Controller
     public function create()
     {
         //
+        // dd('hola');
         return view('admin.tag.create');
     }
 
@@ -42,7 +47,10 @@ class TagController extends Controller
      */
     public function store(TagRequest $request)
     {
-        //
+        $slug = Str::slug($request->name);
+        $data = Arr::add($request->all(), 'slug' , $slug );
+        Tag::create($data);
+        return  redirect()->route('tags.index')->with('mensaje','La etiqueta se agrego correctamente');
     }
 
     /**
@@ -62,9 +70,9 @@ class TagController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Tag $tag)
     {
-        //
+        return view('admin.tag.edit',compact('tag'));
     }
 
     /**
@@ -74,9 +82,13 @@ class TagController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(TagRequest $request, $id)
+    public function update(TagRequest $request, Tag $tag)
     {
         //
+        $slug = Str::slug($request->name);
+        $data = Arr::add($request->all(), 'slug' , $slug );
+        $tag->update($data);
+        return  redirect()->route('tags.index')->with('mensaje','La etiqueta se actualizo correctamente');
     }
 
     /**
@@ -85,8 +97,9 @@ class TagController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Tag $tag)
     {
-        //
+        $tag->delete();
+        return  redirect()->route('tags.index')->with('mensaje','La etiqueta se dio de baja');
     }
 }
