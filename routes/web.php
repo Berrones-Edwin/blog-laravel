@@ -22,13 +22,8 @@ Route::group(['namespace'=>'Web'],function(){
 });
 
 // admin
-Route::group(['namespace'=>'Admin'],function(){
+Route::group(['namespace'=>'Admin','middleware'=>'auth'],function(){
     Route::resource('tags', 'TagController');
-    // Route::get('tags','TagController@index')->name('tags.index');
-    // Route::get('tags/create','TagController@create')->name('tags.create');
-    // Route::post('tags','TagController@store')->name('tags.store');
-
-
     Route::resource('categories', 'CategoryController');
     Route::resource('posts', 'PostController');
 });

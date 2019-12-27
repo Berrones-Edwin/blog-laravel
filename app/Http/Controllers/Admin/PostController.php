@@ -5,6 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+// Helpers
+use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
+
+use App\Http\Requests\PostRequest;
+use App\Post;
+use App\Category;
+
 class PostController extends Controller
 {
     /**
@@ -15,6 +23,9 @@ class PostController extends Controller
     public function index()
     {
         //
+        $id =  auth()->user()->id;
+        $posts = Post::where('user_id',$id)->orderBy('id','desc')->paginate(10);
+        return view('admin.post.index',compact('posts'));
     }
 
     /**
@@ -25,6 +36,8 @@ class PostController extends Controller
     public function create()
     {
         //
+        $categories = Category::all();
+        return view('admin.post.create',compact('categories'));
     }
 
     /**
@@ -33,9 +46,13 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
         //
+        $slug = Str::slug($request->name);
+        $data = Arr::add($request->all(), 'slug' , $slug );
+        Post::create($data);
+        return  redirect()->route('posts.index')->with('mensaje','La entrada se agrego correctamente');
     }
 
     /**
@@ -44,9 +61,11 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($slug)
     {
         //
+        $post = Post::where('slug',$slug)->get()->first();
+        return view('admin.post.show',compact('post'));
     }
 
     /**
@@ -55,9 +74,11 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
         //
+        $categories = Category::all();
+        return view('admin.post.edit',compact('post','categories'));
     }
 
     /**
@@ -67,9 +88,13 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(PostRequest $request, Post $post)
     {
         //
+        $slug = Str::slug($request->name);
+        $data = Arr::add($request->all(), 'slug' , $slug );
+        $post->update($data);
+        return  redirect()->route('posts.index')->with('mensaje','La entrada se actualizo correctamente');
     }
 
     /**
@@ -78,8 +103,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
         //
+        $post->delete();
+        return  redirect()->route('posts.index')->with('mensaje','La entrada se dio de baja');
     }
 }
