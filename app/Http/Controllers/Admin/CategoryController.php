@@ -5,6 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+
+// Helpers
+use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
+
+use App\Http\Requests\CategoryRequest;
+use App\Category;
+
+
 class CategoryController extends Controller
 {
     /**
@@ -15,6 +24,8 @@ class CategoryController extends Controller
     public function index()
     {
         //
+        $categories = Category::orderBy('id','desc')->paginate(10);
+        return view('admin.category.index',compact('categories'));
     }
 
     /**
@@ -25,6 +36,7 @@ class CategoryController extends Controller
     public function create()
     {
         //
+        return view('admin.category.create');
     }
 
     /**
@@ -33,9 +45,13 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
         //
+        $slug = Str::slug($request->name);
+        $data = Arr::add($request->all(), 'slug' , $slug );
+        Category::create($data);
+        return  redirect()->route('categories.index')->with('mensaje','La categoria se agrego correctamente');
     }
 
     /**
@@ -44,9 +60,11 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($slug)
     {
         //
+        $category = Category::where('slug',$slug)->get()->first();
+        return view('admin.category.show',compact('category'));
     }
 
     /**
@@ -55,9 +73,11 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Category $category)
     {
         //
+        return view('admin.category.edit',compact('category'));
+
     }
 
     /**
@@ -67,9 +87,14 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CategoryRequest $request, Category $category)
     {
         //
+
+        $slug = Str::slug($request->name);
+        $data = Arr::add($request->all(), 'slug' , $slug );
+        $category->update($data);
+        return  redirect()->route('categories.index')->with('mensaje','La categoria se actualizo correctamente');
     }
 
     /**
@@ -78,8 +103,10 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Category $category)
     {
         //
+        $category->delete();
+        return  redirect()->route('categories.index')->with('mensaje','La categoria se dio de baja');
     }
 }

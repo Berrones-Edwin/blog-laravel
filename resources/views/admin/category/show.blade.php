@@ -7,13 +7,14 @@
             <div class="card">
                 <div class="card-header">
                     <h5>
-                        {{ $tag->name}}
-                        <a href="{{ route('tags.index') }}" class="float-right btn btn-sm     btn-secondary">Regresar</a>
+                        {{ $category->name}}
+                        <a href="{{ route('categories.index') }}" class="float-right btn btn-sm     btn-secondary">Regresar</a>
                     </h5>
                 </div>
 
                 <div class="card-body">
-                   <p>{{ $tag->slug }}</p>
+                   <p>{{ $category->body }}</p>
+                   <p>Slug <b><em>{{ $category->slug }}</em></b></p>
                 </div>
             </div>
         </div>

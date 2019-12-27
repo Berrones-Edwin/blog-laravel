@@ -7,17 +7,17 @@
             <div class="card">
                 <div class="card-header">
                     <h5>
-                        Crear etiqueta
-                        <a href="{{ route('tags.index') }}" class="float-right btn btn-sm     btn-secondary">Regresar</a>
+                        Crear Categoria
+                        <a href="{{ route('categories.index') }}" class="float-right btn btn-sm     btn-secondary">Regresar</a>
                     </h5>
                 </div>
 
                 <div class="card-body">
                     @include('shared.errors')
-                   <form action="{{  route('tags.store') }}" method="post">
+                   <form action="{{  route('categories.store') }}" method="post">
                         @csrf
                         @method('POST')
-                        @include('admin.tag.form')
+                        @include('admin.category.form')
                       
                    </form>
                 </div>

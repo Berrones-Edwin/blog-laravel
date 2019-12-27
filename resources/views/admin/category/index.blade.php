@@ -7,8 +7,8 @@
             <div class="card">
                 <div class="card-header">
                     <h5>
-                        Listado de Etiquetas
-                        <a href="{{ route('tags.create') }}" class="float-right btn btn-sm     btn-primary">Agregar</a>
+                        Listado de Categorias
+                        <a href="{{ route('categories.create') }}" class="float-right btn btn-sm     btn-primary">Agregar</a>
                     </h5>
                 </div>
 
@@ -23,18 +23,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($tags as $tag)
+                            @foreach($categories as $category)
                                 <tr>
-                                    <td>{{ $tag->id }}</td>
-                                    <td>{{ $tag->name }}</td>
+                                    <td>{{ $category->id }}</td>
+                                    <td>{{ $category->name }}</td>
                                     <td width="10px">
-                                        <a href="{{ route('tags.show',$tag->slug) }}" class="btn btn-sm btn-secondary">Ver</a>
+                                        <a href="{{ route('categories.show',$category->slug) }}" class="btn btn-sm btn-secondary">Ver</a>
                                     </td>
                                     <td width="10px">
-                                        <a href="{{ route('tags.edit',$tag) }}" class="btn btn-sm btn-warning">Editar</a>
+                                        <a href="{{ route('categories.edit',$category) }}" class="btn btn-sm btn-warning">Editar</a>
                                     </td>
                                     <td width="10px">
-                                        <form class="d-inline" action="{{ route('tags.destroy',$tag) }}" method="post">
+                                        <form class="d-inline" action="{{ route('categories.destroy',$category) }}" method="post">
                                             @csrf
                                             @method('DELETE')
                                             <input type="submit" value="Eliminar"  class="btn btn-sm btn-danger"></a>
@@ -44,7 +44,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                    {{ $tags->render() }}
+                    {{ $categories->render() }}
                 </div>
             </div>
         </div>

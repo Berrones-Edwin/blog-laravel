@@ -14,6 +14,7 @@
                 </div>
 
                 <div class="card-body">
+                    @include('shared.errors')
                    <form action="{{ route('tags.update',$tag) }}" method="post">
                         @csrf
                         @method('PUT')
