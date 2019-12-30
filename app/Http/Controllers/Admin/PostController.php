@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 // Helpers
 use Illuminate\Support\Str;
@@ -12,6 +13,7 @@ use Illuminate\Support\Arr;
 use App\Http\Requests\PostRequest;
 use App\Post;
 use App\Category;
+use App\Tag;
 
 class PostController extends Controller
 {
@@ -36,8 +38,11 @@ class PostController extends Controller
     public function create()
     {
         //
-        $categories = Category::all();
-        return view('admin.post.create',compact('categories'));
+        $categories = Category::orderBy('name','ASC')->pluck('name','id')->toArray();
+        $tags = Tag::orderBy('name','ASC')->pluck('name','id')->toArray();
+
+        // dd($categories);
+        return view('admin.post.create',compact('categories','tags'));
     }
 
     /**
@@ -48,10 +53,21 @@ class PostController extends Controller
      */
     public function store(PostRequest $request)
     {
-        //
+        $dataPost = $request->all();
+        if($request->hasFile('file')){
+
+            $dataPost['file'] = $request->file('file')->store('image','public');
+        }
+
+        // data
         $slug = Str::slug($request->name);
-        $data = Arr::add($request->all(), 'slug' , $slug );
-        Post::create($data);
+        $data = Arr::add($dataPost, 'slug' , $slug );
+        $post = Post::create($data);
+      
+        // Tags
+        $post->tags()->sync($request->get('tags'));
+
+
         return  redirect()->route('posts.index')->with('mensaje','La entrada se agrego correctamente');
     }
 
@@ -77,8 +93,9 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         //
-        $categories = Category::all();
-        return view('admin.post.edit',compact('post','categories'));
+        $categories = Category::orderBy('name','ASC')->pluck('name','id');
+        $tags = Tag::orderBy('name','ASC')->pluck('name','id');
+        return view('admin.post.edit',compact('post','categories','tags'));
     }
 
     /**
@@ -91,9 +108,21 @@ class PostController extends Controller
     public function update(PostRequest $request, Post $post)
     {
         //
+        $dataPost = $request->all();
+
+        if($request->hasFile('file')){
+            
+            Storage::delete("public/${$request->file}");
+
+            $dataPost['file'] = $request->file('file')->store('image','public');
+        }
+
         $slug = Str::slug($request->name);
         $data = Arr::add($request->all(), 'slug' , $slug );
         $post->update($data);
+        
+        $post->tags()->sync($request->get('tags'));
+        
         return  redirect()->route('posts.index')->with('mensaje','La entrada se actualizo correctamente');
     }
 
@@ -105,8 +134,14 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
-        $post->delete();
-        return  redirect()->route('posts.index')->with('mensaje','La entrada se dio de baja');
+      
+
+        if(Storage::delete('public/'.$post->file)){
+            $post->delete();
+        }
+
+        return redirect('posts.index')
+                ->with('Mensaje','Empleado eliminado');
+        
     }
 }

@@ -15,7 +15,11 @@
 
                         <div class="card-body">
                             @if($post->file) 
-                                <img src="{{ $post->file }}" width="90%"  heigth=300  alt="{{ $post->name }}" class="img-responsive mx-auto">
+                                @if(preg_match("/https/i", $post->file))
+                                    <img src="{{ $post->file }}" width="90%"  alt="{{ $post->name }}" class="img-responsive mx-auto">
+                                @else
+                                    <img src='{{ asset("storage") . "/" . $post->file }}' width="90%"  alt="{{ $post->name }}" class="img-responsive mx-auto">
+                                @endif
                             @endif
                             <p>
                                 {{ $post->excerpt }}

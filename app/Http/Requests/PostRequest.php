@@ -24,16 +24,13 @@ class PostRequest extends FormRequest
     public function rules()
     {
         return [
-            //
-            
-            "user_id" => "required|integer",
+            "name"        => "required|string",
+            "user_id"     => "required|integer",
             "category_id" => "required|integer",
-            "name" => "required|string",
-            "slug" => "required|string",
-            "excerpt" => "required|string",
-            "body" => "required|string",
-            "status" => "required|string",
-            "file" => "string",
+            "tags"        =>"required|array",
+            "body"        => "required|string",
+            "status"      => "required|in:DRAFT,PUBLISHED",
+            "file"        => "mimes:jpg,jpeg,png",
         ];
     }
 }
