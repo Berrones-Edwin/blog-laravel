@@ -80,7 +80,9 @@ class PostController extends Controller
     public function show($slug)
     {
         //
+
         $post = Post::where('slug',$slug)->get()->first();
+        $this->authorize('pass',$post);
         return view('admin.post.show',compact('post'));
     }
 
@@ -93,9 +95,13 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         //
+        $this->authorize('pass',$post);
+
+        $postTags= $post->tags->pluck('id')->toArray();
+        // dd($postTags);
         $categories = Category::orderBy('name','ASC')->pluck('name','id');
         $tags = Tag::orderBy('name','ASC')->pluck('name','id');
-        return view('admin.post.edit',compact('post','categories','tags'));
+        return view('admin.post.edit',compact('post','categories','tags','postTags'));
     }
 
     /**
@@ -108,17 +114,19 @@ class PostController extends Controller
     public function update(PostRequest $request, Post $post)
     {
         //
+        $this->authorize('pass',$post);
         $dataPost = $request->all();
 
         if($request->hasFile('file')){
             
-            Storage::delete("public/${$request->file}");
-
+            // Storage::delete("public/${$post->file}");
+            Storage::delete('public/'.$post->file);
+            
             $dataPost['file'] = $request->file('file')->store('image','public');
-        }
 
+        }
         $slug = Str::slug($request->name);
-        $data = Arr::add($request->all(), 'slug' , $slug );
+        $data = Arr::add($dataPost, 'slug' , $slug );
         $post->update($data);
         
         $post->tags()->sync($request->get('tags'));
@@ -135,12 +143,14 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
       
-
+        $this->authorize('pass',$post);
+        
+        // $post->delete();
         if(Storage::delete('public/'.$post->file)){
             $post->delete();
         }
 
-        return redirect('posts.index')
+        return redirect()->route('posts.index')
                 ->with('Mensaje','Empleado eliminado');
         
     }

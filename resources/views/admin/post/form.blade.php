@@ -10,10 +10,13 @@
 
 <h6> Etiquetas</h6>   
 <div class="form-group row">
+  
     @foreach($tags as $key => $tag)
         <div class="col-sm-12 col-md-4">
             <input type="checkbox" name="tags[]" 
-                    class="" id="{{ $key }}" value="{{ $key }}">
+                    class="" id="{{ $key }}" value="{{ $key }}" 
+                    @isset($post) {{ in_array($key,$postTags) ? 'checked' : '' }} @endisset >
+
             <label for="{{ $key }}"> {{ $tag }} </label>
         </div>
     @endforeach
@@ -39,11 +42,11 @@
 <div class="form-group">
     <label for="draft">
         DRAFT
-        <input type="radio" value="DRAFT" name="status" id="draft" >
+        <input type="radio" @isset($post){{ $post->status == 'DRAFT' ? 'checked' : ''}} @endisset value="DRAFT" name="status" id="draft" >
     </label>
     <label for="published">
         PUBLISHED
-        <input type="radio" value="PUBLISHED" name="status"  id="published" >
+        <input type="radio"  @isset($post){{ $post->status == 'PUBLISHED' ? 'checked' : ''}} @endisset value="PUBLISHED" name="status"  id="published" >
     </label>
 </div>
 <div class="form-group">
